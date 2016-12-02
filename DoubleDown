@@ -1,0 +1,255 @@
+/*Name: Daisy Arellano(darell3) 
+ Class: CS 141 Fall 2016
+ Assignment: Program 4, DoubleDown
+ Description: Program to create a game where certain groups of 
+ characters placed on board win the game
+ */
+#include <iostream>
+#include <string>
+using namespace std;
+
+//print out basic info
+void printInfo(){
+    cout << "Author: Daisy Arellano and Funmilola Akintoye\n Program: #4 Double down\n TA: Nilanjana Basu and HoangMinh  HuynhNguyen\n \n";
+}
+//print rules
+void printRules(){
+    cout << "Welcome to the game of DoubleDown, where you try to complete a set \nof four pieces that are alike.\nPlayers take turns making moves.\nOn each move your OPPONENT chooses the piece, then YOU get to\nplace it on the board.  If you create a set of four alike when\nyou place your piece, then you win! A set of four alike can be\ncompleted by using four upper case characters, four lower-case\ncharacters, four vowels (a,e,i,o,u) or four consonants.\n\nThe game level determines which positions can be used in completing\nfour alike pieces.  Level one checks for four alike in every row,\ncolumn, and diagonal.  Level two additionally checks for the pieces \nin the four corners as well as each cluster of four in each corner.\n\nWhen prompted for piece to use you may also:\n\tEnter 's' to change program level.\n\tEnter 'x' to exit the program.\n";
+    
+}
+//print out inside of board by taking in arrays
+void insideBoard(char board[], char boardPieces[]){
+    char border[] = "|---------|";
+    cout << border;
+    cout << "square #\n";
+    cout << "| " << board[0] << " " << board[1]<< " " << board[2] << " " << board[3] << " |  1  2  3  4\n";
+    cout << "| " << board[4] << " " << board[5] << " " << board[6] << " " << board[7] << " |  5  6  7  8\n";
+    cout << "| " << board[8] << " " << board[9] << " " << board[10] << " " << board[11] << " |  9 10 11 12\n";
+    cout << "| " << board[12] << " " << board[13] << " " << board[14] << " " << board[15] << " | 13 14 15 16\n";
+    cout << border << "\n";    cout << boardPieces[0] << boardPieces[1] << boardPieces[2] << boardPieces [3] << " ";
+    cout << boardPieces[4] << boardPieces[5] << boardPieces[6] << boardPieces[7] << " ";
+    cout << boardPieces [8] << boardPieces[9] << boardPieces[10] << boardPieces[11] << " ";
+    cout << boardPieces[12] << boardPieces[13] << boardPieces[14] << boardPieces [15] << " \n";
+}
+
+//get rid of pieces which have already been chosen
+void replacePiece(int userNum, char userLetter, char board[], char boardPieces[] ){
+    board[userNum - 1] = userLetter;
+    for( int i = 0; i < 17; i++){
+        if( userLetter == boardPieces[i])
+        {
+            boardPieces[i] = ' ';
+        }
+    }
+    insideBoard( board, boardPieces);
+}
+
+//check through given locations in the arry to see if all of the pieces within the board are within one category
+int checkWinner( int location, int location1, int location2, int location3, char board[]){
+    
+    // initialize arrays with capitals/lowercase/vowels/consonants
+    char capitals[] = "AEIOBCDF";
+    char lowercase[] = "aeiobcdf";
+    char vowels[] = "aeioAEIO";
+    char consonants[] = "bcdfBCDF";
+    //initialize counters
+    int counter = 0;
+    int counter1 = 0;
+    int counter2 = 0;
+    int counter3 = 0;
+    
+    //create an array that contains all the locations so
+    //that we can more easily/efficiently check through every locaion
+    char boardLocation[5];
+    boardLocation[0] = location;
+    boardLocation[1] = location1;
+    boardLocation[2] = location2;
+    boardLocation[3] = location3;
+    
+    //for loop goes through every element in the array that holds our board location
+    for( int i = 0; i <4; i++){
+        
+        // for loop goes through every element in the array that holds categories
+        for(int j = 0; j <= 8; j++){
+            
+            //if board location is capital add to counter
+            if( board[boardLocation[i]] == capitals[j]){
+                counter++;
+            }
+            
+            //if board location is a consonant add to counter1
+            if( board[boardLocation[i]] == consonants[j]){
+                counter1++;
+            }
+            
+            //if board location is a vowel add to counter2
+            if( board[boardLocation[i]] == vowels[j]){
+                counter2++;
+            }
+            
+            //if board location is lowercase add to counter3
+            if( board[boardLocation[i]] == lowercase[j]){
+                counter3++;
+            }
+        }
+    }
+    // if any of our counters are = to 4 and therefor all four elements of the board
+    // are within a category, return 1, otherwise return 0
+    if( counter == 4){
+        return 1;
+    }
+    else if(counter1 == 4){
+        return 1;
+    }
+    else if( counter2 == 4){
+        return 1;
+    }
+    else if(counter3 == 4){
+        return 1;
+    }
+    else{ return 0;}
+}
+//change the player every time the board is displayed
+void trackPlay(int moveNum) {
+    if( (moveNum % 2) == 0){
+        cout << moveNum + 1 << ". Player 2 enter piece and Player 1 enter destination: ";
+    }
+    else {
+        cout << moveNum + 1<< ". Player 1 enter piece and Player 2 enter destination: ";
+    }
+}
+void askDifficulty(char userLetter, int &userChoice){
+    if(userLetter == 's'){
+        cout << "What level of play would you like? 1: Normal, 2: Add corners & groups -->";
+        cin >> userChoice;
+        cout << "\n";
+    }
+}
+
+int main() {
+    printInfo();
+    
+    printRules();
+    
+    char userLetter;
+    int userNum;
+    int userChoice = 0;
+    
+    //Array to hold positions for bottom left corner of the board
+    char bottomLeft[4];
+    bottomLeft[0] = 8;
+    bottomLeft[1] = 9;
+    bottomLeft[2] = 12;
+    bottomLeft[3] = 13;
+    
+    //Possible pieces for user to play
+    char boardPieces[] = {"AEIOaeioBCDFbcdf"};
+    
+    char board[] = {"................"};
+    int i = 0;
+    
+    //Variables to hold different possible wins
+    int winner = 0;
+    int winner1 = 0;
+    int winner2 = 0;
+    int winner3 = 0;
+    int winner4 = 0;
+    int winner5 = 0;
+    int winner6 = 0;
+    int winner7 = 0;
+    int winner8 = 0;
+    int winner9 = 0;
+    int winner10 = 0;
+    int winner11 = 0;
+    int winner12 = 0;
+    int winner13 = 0;
+    int winner14 = 0;
+    
+    int moveNum = 1;
+    
+    
+    insideBoard(board, boardPieces);
+    
+    
+    cout << moveNum << ".Player 2 enter piece and Player 1 enter destination:\n ";
+    
+    //Check for when user wants to change to Level 2
+    do{
+        if( userChoice == 2){
+            winner2 = checkWinner( 10, 11, 14, 15, board);
+            winner3 = checkWinner( 0, 1, 4, 5, board);
+            winner4 = checkWinner( 2, 3 , 6, 7, board);
+            winner5 = checkWinner( 8, 9, 12, 13, board);
+            winner14 = checkWinner( 0, 3, 4, 7, board);
+            if( (winner2 || winner3 || winner5 || winner4 ||  winner14 ) != 0 && (i == 0)){
+                userChoice = 1;
+                winner3 = 0;
+                winner4 = 0;
+                winner5 = 0;
+                winner2 = 0;
+                winner14 = 0;
+                cout << " Sorry, changing level would lead to a pre-existing win. \nResetting the level to level 1.\n";
+                insideBoard(board, boardPieces);
+            }
+            i = 1;
+        }
+        else if( userChoice == 2 && i == 1){
+            if( (winner2 || winner3 || winner5 || winner4 || winner14) == 0 ){
+                winner = checkWinner( 0, 5, 10, 15, board);
+                winner1 = checkWinner( 3, 6, 9 ,12 , board);
+                winner2 = checkWinner( 10, 11, 14, 15, board);
+                winner3 = checkWinner( 0, 1, 4, 5, board);
+                winner4 = checkWinner( 2, 3 , 6, 7, board);
+                winner5 = checkWinner( 8, 9, 12, 13, board);
+                winner6 = checkWinner( 0, 1, 2, 3, board);
+                winner7 = checkWinner( 4, 5, 6, 7, board);
+                winner8 = checkWinner( 8, 9, 10, 11, board);
+                winner9 = checkWinner( 12, 13, 14, 15, board);
+                winner10 = checkWinner( 0, 4, 8, 12, board);
+                winner11 = checkWinner( 1, 5, 9, 13, board);
+                winner12 = checkWinner( 2, 6, 10, 14, board);
+                winner13 = checkWinner( 3, 8, 11, 15, board);
+                winner14 = checkWinner( 0, 3, 4, 7, board);
+            }
+        }
+        else{
+            winner = checkWinner( 0, 5, 10, 15, board);
+            winner1 = checkWinner( 3, 6, 9 ,12 , board);
+            winner6 = checkWinner( 0, 1, 2, 3, board);
+            winner7 = checkWinner( 4, 5, 6, 7, board);
+            winner8 = checkWinner( 8, 9, 10, 11, board);
+            winner9 = checkWinner( 12, 13, 14, 15, board);
+            winner10 = checkWinner( 0, 4, 8, 12, board);
+            winner11 = checkWinner( 1, 5, 9, 13, board);
+            winner12 = checkWinner( 2, 6, 10, 14, board);
+            winner13 = checkWinner( 3, 8, 11, 15, board);
+    
+        }
+        //Check while there is no win
+        if( (winner||winner1||winner2||winner3||winner4||winner5|| winner6 || winner7 || winner8 || winner9 || winner10 || winner11|| winner12  || winner13 || winner14) == 0){
+            
+            //Check if user prompts to change level
+            cin >> userLetter;
+            if(userLetter == 's'){
+                askDifficulty(userLetter, userChoice);
+                insideBoard(board, boardPieces);
+            }
+            else{
+                cin >> userNum;
+                cout << userLetter << userNum << '\n';
+                replacePiece( userNum, userLetter, board, boardPieces);
+                trackPlay( moveNum);
+                moveNum++;
+            }
+        }
+    }while((winner||winner1||winner2||winner3||winner4||winner5|| winner6 || winner7 || winner8 || winner9 || winner10 || winner11|| winner12  || winner13 || winner14) == 0);
+    
+    //Check for who is the winner of the game
+    if( (moveNum - 1)%2 == 0){
+        cout << "\n*** Congratulations! ***  Player 2 wins the game! \n";
+    }
+    else{
+        cout << "\n*** Congratulations! ***  Player 1 wins the game! \n";
+    }
+    
+}
